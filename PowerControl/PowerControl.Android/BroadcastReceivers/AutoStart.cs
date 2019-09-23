@@ -14,22 +14,21 @@ using PowerControl.Droid.Services;
 namespace PowerControl.Droid.BroadcastReceivers
 {
     [BroadcastReceiver]
-    public class PowerMenuReceiver : BroadcastReceiver
+    [IntentFilter(new[] { Intent.ActionBootCompleted }, Priority = (int)IntentFilterPriority.HighPriority)]
+    public class AutoStart : BroadcastReceiver
     {
         public override void OnReceive(Context context, Intent intent)
         {
-            try
+            var service = new Intent(context, typeof(PowerStartUpService));
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
-                PowerMenuService.instance.PerformGlobalAction(Android.AccessibilityServices.GlobalAction.PowerDialog);
+                context.StartForegroundService(service);
             }
-            catch (Exception ex)
+            else
             {
-                Toast.MakeText(context, "receive : " + ex, ToastLength.Short).Show();
-
+                context.StartService(service);
             }
-
-
-            //PowerMenuService.instance.PerformGlobalAction(Android.AccessibilityServices.GlobalAction.PowerDialog);
         }
     }
 }

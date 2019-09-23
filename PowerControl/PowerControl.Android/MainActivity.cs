@@ -7,6 +7,7 @@ using Android.Runtime;
 using Android.Support.V4.Content;
 using ButtonCircle.FormsPlugin.Droid;
 using ImageCircle.Forms.Plugin.Droid;
+using PowerControl.Droid.Lib;
 using PowerControl.Droid.Services;
 using Prism;
 using Prism.Ioc;
@@ -18,22 +19,29 @@ namespace PowerControl.Droid
     [Activity(Label = "PowerControl", Icon = "@mipmap/ic_launcher", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
-        private ComponentName comDeviceAdmin;
-        private DevicePolicyManager dpm;
+        private LockDevice Lock;
+        private MenuControlPower MenuControlPower;
         protected override void OnCreate(Bundle bundle)
         {
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
-            
+
             base.OnCreate(bundle);
             Xamarin.Essentials.Platform.Init(this, bundle);
             global::Xamarin.Forms.Forms.Init(this, bundle);
             ImageCircleRenderer.Init();
             ButtonCircleRenderer.Init();
             LoadApplication(new App(new AndroidInitializer()));
-            CreateDeviceManager();
+            InitPowerControl();
             CreateMessageCenter();
         }
+
+        private void InitPowerControl()
+        {
+            Lock = new LockDevice(this);
+            MenuControlPower = new MenuControlPower(this);
+        }
+
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -47,8 +55,11 @@ namespace PowerControl.Droid
             {
                 try
                 {
-                    ActiveAdminDevice();
-                    LockDeivce();
+
+                   
+                    Lock.StartLockDevice();
+                    //ActiveAdminDevice();
+                    //LockDeivce();
                 }
                 catch (System.Exception ex)
                 {
@@ -60,9 +71,9 @@ namespace PowerControl.Droid
             {
                 try
                 {
-
+                    MenuControlPower.OpenMenuControl();
                     //ActiveAdminDevice();
-                    ShutDown();
+                    //ShutDown();
                 }
                 catch (System.Exception ex)
                 {
@@ -72,40 +83,6 @@ namespace PowerControl.Droid
             });
         }
 
-        private void CreateDeviceManager()
-        {
-            dpm = (DevicePolicyManager)GetSystemService(DevicePolicyService);
-            comDeviceAdmin = new ComponentName(this, Java.Lang.Class.FromType(typeof(DeviceAdmin)));
-        }
-        private void ActiveAdminDevice()
-        {
-            bool isAdmin = dpm.IsAdminActive(comDeviceAdmin);
-            if (!isAdmin)
-            {
-                Intent intent = new Intent(DevicePolicyManager.ActionAddDeviceAdmin);
-                intent.PutExtra(DevicePolicyManager.ExtraDeviceAdmin, comDeviceAdmin);
-                intent.PutExtra(DevicePolicyManager.ExtraAddExplanation, "Device administrator");
-                StartActivity(intent);
-            }
-        }
-
-        private void ShutDown()
-        {
-
-            ComponentName component = new ComponentName(ApplicationContext, Java.Lang.Class.FromType(typeof(PowerMenuService)));
-            PackageManager.SetComponentEnabledSetting(component, ComponentEnabledState.Enabled, ComponentEnableOption.DontKillApp);
-            Intent intent = new Intent("com.companyname.appname.ACCESSIBILITY_ACTION");
-            var power = Android.AccessibilityServices.GlobalAction.PowerDialog;
-            //intent.PutExtra("action", 6);
-            //intent.PutExtra("action",Android.AccessibilityServices.GlobalAction.PowerDialog);
-            LocalBroadcastManager.GetInstance(ApplicationContext).SendBroadcast(intent);
-            //dpm.Reboot(comDeviceAdmin);
-        }
-
-        private void LockDeivce()
-        {
-            dpm.LockNow();
-        }
 
     }
 

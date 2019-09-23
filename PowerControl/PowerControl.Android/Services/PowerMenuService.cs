@@ -16,7 +16,7 @@ using PowerControl.Droid.BroadcastReceivers;
 
 namespace PowerControl.Droid.Services
 {
-    [Service(Name = "com.companyname.appname.service",Enabled =true,Exported =true,Permission =Manifest.Permission.BindAccessibilityService)]
+    [Service(Name = "com.companyname.powerapp.powerMenu", Enabled =true,Exported =true,Permission =Manifest.Permission.BindAccessibilityService)]
     [MetaData("android.accessibilityservice",Resource = "@xml/accessibility_service")]
     [IntentFilter(new[] { "android.accessibilityservice.AccessibilityService" })]
     public class PowerMenuService : AccessibilityService

@@ -43,6 +43,7 @@
     <AotAssemblies>true</AotAssemblies>
     <EnableLLVM>true</EnableLLVM>
     <MandroidI18n />
+    <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -80,12 +81,18 @@
     <PackageReference Include="Prism.DryIoc.Forms" Version="7.1.0.431" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BroadcastReceivers\AutoStart.cs" />
     <Compile Include="BroadcastReceivers\PowerMenuReceiver.cs" />
+    <Compile Include="Lib\BasePowerControl.cs" />
+    <Compile Include="Lib\LockDevice.cs" />
+    <Compile Include="Lib\MenuControlPower.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BroadcastReceivers\DeviceAdmin.cs" />
+    <Compile Include="Services\PowerControlService.cs" />
     <Compile Include="Services\PowerMenuService.cs" />
+    <Compile Include="Services\PowerStartUpService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
